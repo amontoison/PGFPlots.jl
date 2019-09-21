@@ -626,6 +626,10 @@ function plotHelper(o::IO, p::Contour)
     println(o, "};")
 end
 
+function plotHelper(o::IO, p::Surface)
+    # TO DO
+end
+
 function plotHelper(o::IO, p::Circle)
     if p.style != nothing
         println(o, "\\draw[$(p.style)] (axis cs:$(p.xc), $(p.yc)) circle[radius=$(p.radius)];")
@@ -764,6 +768,10 @@ function plot(p::Contour)
     plot(Axis(p, xmin=p.xbins[1], xmax=p.xbins[end], ymin=p.ybins[1], ymax=p.ybins[end]))
 end
 
+function plot(p::Surface)
+    plot(Axis(p, xmin=p.xbins[1], xmax=p.xbins[end], ymin=p.ybins[1], ymax=p.ybins[end]))
+end
+
 function plot(
     x::AbstractArray{A,1},
     y::AbstractArray{B,1};
@@ -804,6 +812,7 @@ cleanup(p::Command) = nothing
 cleanup(p::Image) = rm(p.filename)
 cleanup(p::MatrixPlot) = rm(p.filename)
 cleanup(p::Contour) = nothing
+cleanup(p::Surface) = nothing
 cleanup(p::TikzPicture) = nothing
 
 axisOptions(p::Plot) = nothing
@@ -864,6 +873,7 @@ canPlot(p::Command) = true
 canPlot(p::Image) = isfile(p.filename)
 canPlot(p::MatrixPlot) = isfile(p.filename)
 canPlot(p::Contour) = true
+canPlot(p::Surface) = true
 canPlot(p::TikzPicture) = true
 
 function Base.show(f::IO, a::MIME"image/svg+xml", p::Plottable)

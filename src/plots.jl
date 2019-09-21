@@ -1,6 +1,6 @@
 module Plots
 
-export Plot, Histogram, Histogram2, BarChart, Linear, Linear3, Image, Patch2D, Contour, Scatter, Quiver, Node, Circle, Ellipse, Command, MatrixPlot, SmithData, SmithCircle
+export Plot, Histogram, Histogram2, BarChart, Linear, Linear3, Image, Patch2D, Contour, Surface, Scatter, Quiver, Node, Circle, Ellipse, Command, MatrixPlot, SmithData, SmithCircle
 
 using ..ColorMaps
 using Discretizers
@@ -147,6 +147,27 @@ mutable struct Contour <: Plot
             A = Float64[f([xi,yi]) for xi in x, yi in y]
         end
         new(A, x, y, style, contour_style, number, levels, labels)
+    end
+end
+
+mutable struct Surface <: Plot
+    data::AbstractMatrix
+    xbins
+    ybins
+    style
+    surface_style
+    labels
+    Surface(data, xbins, ybins; style=nothing, surface_style=nothing, labels=nothing) = new(data, xbins, ybins, style, surface_style, labels)
+    function Surface(f::Function, xrange::RealRange, yrange::RealRange; xbins=40, ybins=40, style=nothing, surface_style=nothing, labels=nothing)
+        x = range(xrange[1], stop=xrange[2], length=xbins)
+        y = range(yrange[1], stop=yrange[2], length=ybins)
+        A = zeros(xbins, ybins)
+        try
+            A = Float64[f(xi, yi) for xi in x, yi in y]
+        catch
+            A = Float64[f([xi,yi]) for xi in x, yi in y]
+        end
+        new(A, x, y, style, surface_style, labels)
     end
 end
 
